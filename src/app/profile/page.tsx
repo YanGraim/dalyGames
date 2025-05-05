@@ -26,14 +26,14 @@ export default function Profile() {
             </button>
           </div>
         </section>
-        <section className="flex flex-wrap flex-col gap-5 md:flex-row">
-          <div className="flex-grow flex-wrap ">
+        <section className="flex flex-wrap mb-5 flex-col gap-5 md:flex-row">
+          <div className="flex-grow flex-wrap">
             <FavoriteCard />
           </div>
-          <div className="flex-grow flex-wrap ">
+          <div className="flex-grow flex-wrap">
             <FavoriteCard />
           </div>
-          <div className="flex-grow flex-wrap ">
+          <div className="flex-grow flex-wrap">
             <FavoriteCard />
           </div>
         </section>
