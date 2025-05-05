@@ -2,11 +2,27 @@ import { Container } from "@/components/container";
 import { GameProps } from "@/utils/types/game";
 import Image from "next/image";
 import { redirect } from "next/navigation";
+import { Label } from "./components/label";
+import { GameCard } from "@/components/gameCard";
+import next from "next";
 
 async function getId(id: string) {
   try {
     const res = await fetch(
-      `${process.env.NEXT_API_URL}/next-api/?api=game&id=${id}`
+      `${process.env.NEXT_API_URL}/next-api/?api=game&id=${id}`,
+      { next: { revalidate: 60 } }
+    );
+    return res.json();
+  } catch (error) {
+    throw new Error("Ocorreu algum erro na chamada");
+  }
+}
+
+async function getGameSorted() {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_API_URL}/next-api/?api=game_day`,
+      { cache: "no-store" }
     );
     return res.json();
   } catch (error) {
@@ -21,6 +37,7 @@ export default async function GameDetail({
 }) {
   const id = (await params).id;
   const data: GameProps = await getId(id);
+  const gameSorted: GameProps = await getGameSorted();
 
   if (!data) {
     redirect("/");
@@ -41,6 +58,32 @@ export default async function GameDetail({
       <Container>
         <h1 className="text-2xl font-bold my-4">{data.title}</h1>
         <p>{data.description}</p>
+
+        <h2 className="text-lg font-bold mt-7 mb-2">Plataformas</h2>
+        <div className="flex gap-2 flex-wrap">
+          {data.platforms.map((item) => (
+            <Label key={item} name={item} />
+          ))}
+        </div>
+
+        <h2 className="text-lg font-bold mt-7 mb-2">Categorias</h2>
+        <div className="flex gap-2 flex-wrap">
+          {data.categories.map((item) => (
+            <Label key={item} name={item} />
+          ))}
+        </div>
+
+        <p className="mt-7 mb-2">
+          <strong>Data de lançamento: </strong>
+          {data.release}
+        </p>
+
+        <h2 className="text-lg font-bold mt-7 mb-2">Jogo recomendado:</h2>
+        <div className="flex">
+          <div className="flex-grow">
+            <GameCard data={gameSorted} />
+          </div>
+        </div>
       </Container>
     </main>
   );
