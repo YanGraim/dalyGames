@@ -15,10 +15,11 @@ async function getId(id: string) {
 }
 
 export default async function GameDetail({
-  params: { id },
+  params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const id = (await params).id;
   const data: GameProps = await getId(id);
 
   if (!data) {
@@ -31,7 +32,7 @@ export default async function GameDetail({
           src={data.image_url}
           alt={data.title}
           fill
-          priority
+          priority={true}
           quality={100}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw"
           className="object-cover w-full h-80 sm:h-96 opacity-70"
